@@ -1,977 +1,2486 @@
+html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Economy Simulator</title>
+<title>Global Economy Simulator - Deep Analysis Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #0a0e17;
-  color: #e4e6eb;
-  overflow-x: hidden;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-.container {
-  max-width: 1400px;
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --border: #e2e8f0;
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.logo-text h1 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.logo-text p {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Main Content */
+.main-content {
+  max-width: 1600px;
   margin: 0 auto;
   padding: 2rem;
+  width: 100%;
+  flex: 1;
 }
-h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.subtitle {
-  color: #8b92a7;
-  margin-bottom: 2rem;
-  font-size: 0.95rem;
-}
-.grid {
+
+.content-grid {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
 }
+
+/* Sidebar */
 .sidebar {
-  background: #151b2b;
-  border-radius: 12px;
-  padding: 1.5rem;
-  height: fit-content;
-  border: 1px solid #1f2937;
-}
-.main-panel {
-  background: #151b2b;
-  border-radius: 12px;
-  padding: 1.5rem;
-  border: 1px solid #1f2937;
-}
-.tabs {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-  border-bottom: 1px solid #1f2937;
-  padding-bottom: 0.5rem;
+  flex-direction: column;
+  gap: 1.5rem;
 }
-.tab {
-  background: transparent;
-  border: none;
-  color: #8b92a7;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 0.9rem;
+
+.card {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.card-header h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.country-search {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.country-search input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: var(--bg-secondary);
   transition: all 0.2s;
 }
-.tab:hover { background: #1f2937; color: #e4e6eb; }
-.tab.active {
-  background: #667eea;
-  color: white;
-  font-weight: 500;
-}
-.country-selector {
-  margin-bottom: 1.5rem;
-}
-.country-selector label {
-  display: block;
-  color: #8b92a7;
-  font-size: 0.85rem;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.country-selector select {
-  width: 100%;
-  background: #0a0e17;
-  border: 1px solid #1f2937;
-  color: #e4e6eb;
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-.country-selector select:focus {
+
+.country-search input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--accent-primary);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
-.stat-grid {
+
+.search-icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: 1rem;
+}
+
+.country-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.country-item {
+  padding: 0.875rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.country-item:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border);
+}
+
+.country-item.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+  border-color: var(--accent-primary);
+}
+
+.country-flag {
+  font-size: 1.5rem;
+}
+
+.country-info {
+  flex: 1;
+}
+
+.country-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.country-region {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+/* Stats Grid */
+.stats-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
+
 .stat-card {
-  background: #0a0e17;
-  padding: 0.75rem;
-  border-radius: 8px;
-  border: 1px solid #1f2937;
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
 }
+
+.stat-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
 .stat-label {
   font-size: 0.75rem;
-  color: #8b92a7;
+  color: var(--text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
 }
-.stat-value {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #e4e6eb;
-}
+
 .stat-change {
   font-size: 0.75rem;
-  margin-top: 0.25rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 4px;
 }
-.stat-change.positive { color: #10b981; }
-.stat-change.negative { color: #ef4444; }
-.scenario-section {
-  margin-bottom: 2rem;
+
+.stat-change.positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
 }
-.scenario-section h3 {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  color: #e4e6eb;
+
+.stat-change.negative {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
 }
-.scenario-buttons {
+
+/* Scenarios */
+.scenario-grid {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
-.scenario-btn {
-  background: #1f2937;
-  border: 1px solid #374151;
-  color: #e4e6eb;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+
+.scenario-card {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
   cursor: pointer;
-  text-align: left;
-  font-size: 0.9rem;
   transition: all 0.2s;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
-.scenario-btn:hover {
-  background: #374151;
-  border-color: #667eea;
+
+.scenario-card:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
 }
+
 .scenario-icon {
-  font-size: 1.2rem;
-}
-.trade-matrix {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-.trade-matrix th {
-  background: #0a0e17;
-  padding: 0.75rem 0.5rem;
-  text-align: left;
-  color: #8b92a7;
-  font-weight: 500;
-  border-bottom: 1px solid #1f2937;
-}
-.trade-matrix td {
-  padding: 0.75rem 0.5rem;
-  border-bottom: 1px solid #1f2937;
-}
-.trade-matrix tr:hover {
-  background: #1f2937;
-}
-.supply-chain {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.chain-item {
-  background: #0a0e17;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #1f2937;
-}
-.chain-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-.chain-title {
-  font-weight: 500;
-  color: #e4e6eb;
-}
-.chain-status {
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-.chain-status.healthy { background: #10b98130; color: #10b981; }
-.chain-status.warning { background: #f59e0b30; color: #f59e0b; }
-.chain-status.critical { background: #ef444430; color: #ef4444; }
-.chain-flow {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: #8b92a7;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
-.flow-arrow {
-  color: #667eea;
-}
-.parameter-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.control-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.control-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.85rem;
-  color: #8b92a7;
-}
-.control-value {
-  color: #e4e6eb;
-  font-weight: 500;
-}
-input[type="range"] {
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: #1f2937;
-  outline: none;
-  -webkit-appearance: none;
-}
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #667eea;
-  cursor: pointer;
-}
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #667eea;
-  cursor: pointer;
-  border: none;
-}
-.event-log {
-  background: #0a0e17;
-  border: 1px solid #1f2937;
-  border-radius: 8px;
-  padding: 1rem;
-  max-height: 300px;
-  overflow-y: auto;
-}
-.event-item {
-  padding: 0.75rem;
-  border-left: 3px solid #667eea;
-  background: #151b2b;
-  margin-bottom: 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-}
-.event-time {
-  color: #8b92a7;
-  font-size: 0.75rem;
+
+.scenario-icon.danger { background: rgba(239, 68, 68, 0.1); }
+.scenario-icon.warning { background: rgba(245, 158, 11, 0.1); }
+.scenario-icon.info { background: rgba(59, 130, 246, 0.1); }
+.scenario-icon.success { background: rgba(16, 185, 129, 0.1); }
+
+.scenario-content h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
   margin-bottom: 0.25rem;
 }
-.event-text {
-  color: #e4e6eb;
+
+.scenario-content p {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
 }
-.comparison-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+
+/* Main Panel */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
-.comparison-card {
-  background: #0a0e17;
-  border: 1px solid #1f2937;
+
+.tabs {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.tab {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  padding: 1.25rem;
+  background: transparent;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
 }
-.comparison-card h4 {
+
+.tab:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Overview Grid */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.metric-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 1rem;
-  color: #e4e6eb;
 }
+
+.metric-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.metric-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 .metric-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #1f2937;
-  font-size: 0.85rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
 }
-.metric-row:last-child {
+
+.metric-row-label {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.metric-row-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Trade Table */
+.table-container {
+  overflow-x: auto;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table thead {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+.data-table th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.data-table td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.data-table tr:hover {
+  background: var(--bg-tertiary);
+}
+
+.data-table tr:last-child td {
   border-bottom: none;
 }
-.metric-name {
-  color: #8b92a7;
+
+/* Supply Chain */
+.supply-chain-grid {
+  display: grid;
+  gap: 1rem;
 }
-.metric-value {
-  color: #e4e6eb;
-  font-weight: 500;
+
+.chain-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
 }
-.btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 0.9rem;
-  transition: transform 0.2s;
-}
-.btn-primary:hover {
+
+.chain-card:hover {
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
+
+.chain-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chain-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.chain-status {
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.chain-status.healthy {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.chain-status.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.chain-status.critical {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.chain-flow {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chain-risk {
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+  border-left: 3px solid var(--warning);
+}
+
+/* Event Log */
+.event-log {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  max-height: 600px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.event-item {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 1rem;
+}
+
+.event-item:last-child {
+  border-bottom: none;
+}
+
+.event-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+}
+
+.event-content {
+  flex: 1;
+}
+
+.event-time {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.25rem;
+}
+
+.event-text {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+/* Chart Container */
+.chart-wrapper {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .chart-container {
-  margin-top: 1.5rem;
-  height: 300px;
+  height: 350px;
+  position: relative;
+}
+
+/* Data Sources */
+.sources-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.source-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.source-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--accent-primary);
+}
+
+.source-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.source-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.source-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.source-description {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+.source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.source-link:hover {
+  text-decoration: underline;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: 280px 1fr;
+  }
+  
+  .overview-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sources-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .tabs {
+    overflow-x: auto;
+  }
 }
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>World Economy Simulator</h1>
-  <p class="subtitle">Deep simulation with supply chains, currency dynamics, and feedback loops</p>
-  
-  <div class="grid">
-    <div class="sidebar">
-      <div class="country-selector">
-        <label>Select Country</label>
-        <select id="countrySelect">
-          <option value="usa">United States</option>
-          <option value="china">China</option>
-          <option value="korea">South Korea</option>
-          <option value="germany">Germany</option>
-          <option value="japan">Japan</option>
-        </select>
-      </div>
-      
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-label">GDP</div>
-          <div class="stat-value" id="gdpValue">$25.4T</div>
-          <div class="stat-change positive" id="gdpChange">+2.1%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Inflation</div>
-          <div class="stat-value" id="inflationValue">3.2%</div>
-          <div class="stat-change negative" id="inflationChange">+0.5%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Unemployment</div>
-          <div class="stat-value" id="unemploymentValue">3.8%</div>
-          <div class="stat-change positive" id="unemploymentChange">-0.2%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Debt/GDP</div>
-          <div class="stat-value" id="debtValue">123%</div>
-          <div class="stat-change negative" id="debtChange">+1.2%</div>
+<div class="app-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">🌍</div>
+        <div class="logo-text">
+          <h1>Global Economy Simulator</h1>
+          <p>Deep Economic Analysis Platform</p>
         </div>
       </div>
-      
-      <div class="scenario-section">
-        <h3>Scenarios</h3>
-        <div class="scenario-buttons">
-          <button class="scenario-btn" onclick="applyScenario('sanctions')">
-            <span class="scenario-icon">🚫</span>
-            <span>Trade sanctions</span>
-          </button>
-          <button class="scenario-btn" onclick="applyScenario('war')">
-            <span class="scenario-icon">⚔️</span>
-            <span>Military conflict</span>
-          </button>
-          <button class="scenario-btn" onclick="applyScenario('autarky')">
-            <span class="scenario-icon">🏰</span>
-            <span>Autarky mode</span>
-          </button>
-          <button class="scenario-btn" onclick="applyScenario('oil_crisis')">
-            <span class="scenario-icon">🛢️</span>
-            <span>Oil crisis</span>
-          </button>
-          <button class="scenario-btn" onclick="applyScenario('ai_boom')">
-            <span class="scenario-icon">🤖</span>
-            <span>AI productivity boom</span>
-          </button>
-          <button class="scenario-btn" onclick="applyScenario('recession')">
-            <span class="scenario-icon">📉</span>
-            <span>Global recession</span>
-          </button>
+      <div class="header-actions">
+        <button class="btn btn-secondary" onclick="showDataSources()">
+          📊 Data Sources
+        </button>
+        <button class="btn btn-secondary" onclick="exportData()">
+          💾 Export Data
+        </button>
+        <button class="btn btn-primary" onclick="resetSimulation()">
+          🔄 Reset Simulation
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="content-grid">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Country Selection -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Select Country</h3>
+          </div>
+          <div class="card-body">
+            <div class="country-search">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="countrySearchInput" placeholder="Search countries..." onkeyup="filterCountries()">
+            </div>
+            <div class="country-list" id="countryList"></div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Key Indicators</h3>
+          </div>
+          <div class="card-body">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">GDP</div>
+                <div class="stat-value" id="quickGdp">$25.4T</div>
+                <span class="stat-change positive" id="quickGdpChange">↑ 2.1%</span>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Inflation</div>
+                <div class="stat-value" id="quickInflation">3.2%</div>
+                <span class="stat-change negative" id="quickInflationChange">↑ 0.5%</span>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Unemployment</div>
+                <div class="stat-value" id="quickUnemployment">3.8%</div>
+                <span class="stat-change positive" id="quickUnemploymentChange">↓ 0.2%</span>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Trade</div>
+                <div class="stat-value" id="quickTrade">-$800B</div>
+                <span class="stat-change negative" id="quickTradeChange">↓ 2.3%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scenarios -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Run Scenarios</h3>
+          </div>
+          <div class="card-body">
+            <div class="scenario-grid">
+              <div class="scenario-card" onclick="applyScenario('sanctions')">
+                <div class="scenario-icon danger">🚫</div>
+                <div class="scenario-content">
+                  <h4>Trade Sanctions</h4>
+                  <p>Export restrictions & embargoes</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('war')">
+                <div class="scenario-icon danger">⚔️</div>
+                <div class="scenario-content">
+                  <h4>Military Conflict</h4>
+                  <p>War scenario & defense spending</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('autarky')">
+                <div class="scenario-icon warning">🏰</div>
+                <div class="scenario-content">
+                  <h4>Autarky Mode</h4>
+                  <p>Economic self-sufficiency</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('oil_crisis')">
+                <div class="scenario-icon warning">🛢️</div>
+                <div class="scenario-content">
+                  <h4>Oil Crisis</h4>
+                  <p>Energy price shock</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('ai_boom')">
+                <div class="scenario-icon success">🤖</div>
+                <div class="scenario-content">
+                  <h4>AI Revolution</h4>
+                  <p>Productivity breakthrough</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('recession')">
+                <div class="scenario-icon danger">📉</div>
+                <div class="scenario-content">
+                  <h4>Global Recession</h4>
+                  <p>Economic downturn</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('trade_war')">
+                <div class="scenario-icon danger">⚡</div>
+                <div class="scenario-content">
+                  <h4>Trade War</h4>
+                  <p>Tariffs & counter-tariffs</p>
+                </div>
+              </div>
+              <div class="scenario-card" onclick="applyScenario('climate_shock')">
+                <div class="scenario-icon warning">🌪️</div>
+                <div class="scenario-content">
+                  <h4>Climate Shock</h4>
+                  <p>Natural disaster impact</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Panel -->
+      <div class="panel">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('overview')">📊 Overview</button>
+          <button class="tab" onclick="switchTab('trade')">🌐 Trade Matrix</button>
+          <button class="tab" onclick="switchTab('supply')">⛓️ Supply Chains</button>
+          <button class="tab" onclick="switchTab('events')">📝 Event Log</button>
+          <button class="tab" onclick="switchTab('sources')">📚 Data Sources</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overviewTab" class="tab-content active">
+          <div class="overview-grid">
+            <div class="metric-card">
+              <div class="metric-header">
+                <h4 class="metric-title">Economic Performance</h4>
+                <div class="metric-icon" style="background: rgba(99, 102, 241, 0.1);">📈</div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span class="metric-row-label">GDP Growth</span>
+                  <span class="metric-row-value" id="gdpGrowth">2.1%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Real GDP</span>
+                  <span class="metric-row-value" id="realGdp">$25.4T</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">GDP per Capita</span>
+                  <span class="metric-row-value" id="gdpPerCapita">$76,398</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <h4 class="metric-title">Trade Balance</h4>
+                <div class="metric-icon" style="background: rgba(16, 185, 129, 0.1);">🌍</div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span class="metric-row-label">Net Balance</span>
+                  <span class="metric-row-value" id="tradeBalance">-$800B</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Exports</span>
+                  <span class="metric-row-value" id="exports">$2.1T</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Imports</span>
+                  <span class="metric-row-value" id="imports">$2.9T</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <h4 class="metric-title">Labor Market</h4>
+                <div class="metric-icon" style="background: rgba(245, 158, 11, 0.1);">👥</div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span class="metric-row-label">Unemployment</span>
+                  <span class="metric-row-value" id="unemployment">3.8%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Labor Force</span>
+                  <span class="metric-row-value" id="laborForce">164M</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Productivity</span>
+                  <span class="metric-row-value" id="productivity">$72/hr</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <h4 class="metric-title">Fiscal Position</h4>
+                <div class="metric-icon" style="background: rgba(239, 68, 68, 0.1);">💰</div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span class="metric-row-label">Debt-to-GDP</span>
+                  <span class="metric-row-value" id="debtGdp">123%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Deficit</span>
+                  <span class="metric-row-value" id="deficit">-5.4%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">FX Reserves</span>
+                  <span class="metric-row-value" id="fxReserves">$130B</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <h4 class="metric-title">Monetary Policy</h4>
+                <div class="metric-icon" style="background: rgba(139, 92, 246, 0.1);">🏦</div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span class="metric-row-label">Interest Rate</span>
+                  <span class="metric-row-value" id="interestRate">5.25%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Inflation</span>
+                  <span class="metric-row-value" id="inflation">3.2%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">Money Supply</span>
+                  <span class="metric-row-value" id="moneySupply">+6.5%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-header">
+                <h4 class="metric-title">Innovation & Tech</h4>
+                <div class="metric-icon" style="background: rgba(59, 130, 246, 0.1);">🚀</div>
+              </div>
+              <div class="metric-rows">
+                <div class="metric-row">
+                  <span class="metric-row-label">AI Automation</span>
+                  <span class="metric-row-value" id="aiLevel">15%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">R&D Spending</span>
+                  <span class="metric-row-value" id="rdSpending">3.1%</span>
+                </div>
+                <div class="metric-row">
+                  <span class="metric-row-label">STEM Graduates</span>
+                  <span class="metric-row-value" id="stemGrads">568K/yr</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper" style="margin-top: 1.5rem;">
+            <div class="chart-header">
+              <h3 class="chart-title">Economic Trends</h3>
+            </div>
+            <div class="chart-container">
+              <canvas id="mainChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trade Tab -->
+        <div id="tradeTab" class="tab-content">
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Trading Partner</th>
+                  <th>Exports ($B)</th>
+                  <th>Imports ($B)</th>
+                  <th>Balance ($B)</th>
+                  <th>Key Goods</th>
+                  <th>% of Total Trade</th>
+                </tr>
+              </thead>
+              <tbody id="tradeTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Supply Chain Tab -->
+        <div id="supplyTab" class="tab-content">
+          <div class="supply-chain-grid" id="supplyChainContainer"></div>
+        </div>
+
+        <!-- Events Tab -->
+        <div id="eventsTab" class="tab-content">
+          <div class="event-log" id="eventLog"></div>
+        </div>
+
+        <!-- Data Sources Tab -->
+        <div id="sourcesTab" class="tab-content">
+          <div class="sources-grid">
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">🏛️</div>
+                <div class="source-name">World Bank</div>
+              </div>
+              <p class="source-description">GDP, GDP growth, inflation, unemployment, and debt data from World Development Indicators.</p>
+              <a href="https://data.worldbank.org/" target="_blank" class="source-link">
+                Visit World Bank Data →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">💹</div>
+                <div class="source-name">IMF</div>
+              </div>
+              <p class="source-description">International Monetary Fund fiscal data, trade balances, and FX reserves from World Economic Outlook.</p>
+              <a href="https://www.imf.org/en/Data" target="_blank" class="source-link">
+                Visit IMF Data →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">📊</div>
+                <div class="source-name">OECD</div>
+              </div>
+              <p class="source-description">Labor market statistics, productivity metrics, and R&D expenditure from OECD.Stat.</p>
+              <a href="https://stats.oecd.org/" target="_blank" class="source-link">
+                Visit OECD Stats →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">🌐</div>
+                <div class="source-name">WTO</div>
+              </div>
+              <p class="source-description">World Trade Organization trade statistics, tariff data, and bilateral trade flows.</p>
+              <a href="https://www.wto.org/english/res_e/statis_e/statis_e.htm" target="_blank" class="source-link">
+                Visit WTO Statistics →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">🏦</div>
+                <div class="source-name">BIS</div>
+              </div>
+              <p class="source-description">Bank for International Settlements monetary policy, exchange rates, and central bank data.</p>
+              <a href="https://www.bis.org/statistics/index.htm" target="_blank" class="source-link">
+                Visit BIS Statistics →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">🔬</div>
+                <div class="source-name">UNESCO</div>
+              </div>
+              <p class="source-description">Education statistics including STEM graduates and R&D personnel from UIS database.</p>
+              <a href="http://data.uis.unesco.org/" target="_blank" class="source-link">
+                Visit UNESCO Data →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">⚡</div>
+                <div class="source-name">IEA</div>
+              </div>
+              <p class="source-description">International Energy Agency data on energy consumption, production, and prices.</p>
+              <a href="https://www.iea.org/data-and-statistics" target="_blank" class="source-link">
+                Visit IEA Data →
+              </a>
+            </div>
+
+            <div class="source-card">
+              <div class="source-header">
+                <div class="source-icon">🛡️</div>
+                <div class="source-name">SIPRI</div>
+              </div>
+              <p class="source-description">Stockholm International Peace Research Institute military expenditure database.</p>
+              <a href="https://www.sipri.org/databases" target="_blank" class="source-link">
+                Visit SIPRI Database →
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    
-    <div class="main-panel">
-      <div class="tabs">
-        <button class="tab active" onclick="switchTab('overview')">Overview</button>
-        <button class="tab" onclick="switchTab('trade')">Trade Matrix</button>
-        <button class="tab" onclick="switchTab('supply')">Supply Chains</button>
-        <button class="tab" onclick="switchTab('currency')">Currency</button>
-        <button class="tab" onclick="switchTab('events')">Event Log</button>
-      </div>
-      
-      <div id="overviewTab" class="tab-content">
-        <div class="comparison-grid">
-          <div class="comparison-card">
-            <h4>Economic Indicators</h4>
-            <div class="metric-row">
-              <span class="metric-name">Real GDP growth</span>
-              <span class="metric-value" id="gdpGrowth">2.1%</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-name">Trade balance</span>
-              <span class="metric-value" id="tradeBalance">-$800B</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-name">FX reserves</span>
-              <span class="metric-value" id="fxReserves">$130B</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-name">Military spending</span>
-              <span class="metric-value" id="military">3.4% GDP</span>
-            </div>
-          </div>
-          
-          <div class="comparison-card">
-            <h4>Productivity & Labor</h4>
-            <div class="metric-row">
-              <span class="metric-name">Labor productivity</span>
-              <span class="metric-value" id="productivity">$72/hr</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-name">Labor force</span>
-              <span class="metric-value" id="laborForce">164M</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-name">AI automation</span>
-              <span class="metric-value" id="aiLevel">15%</span>
-            </div>
-            <div class="metric-row">
-              <span class="metric-name">STEM graduates</span>
-              <span class="metric-value" id="stemGrads">568K/yr</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="chart-container">
-          <canvas id="mainChart"></canvas>
-        </div>
-      </div>
-      
-      <div id="tradeTab" class="tab-content" style="display: none;">
-        <table class="trade-matrix">
-          <thead>
-            <tr>
-              <th>Partner</th>
-              <th>Exports</th>
-              <th>Imports</th>
-              <th>Balance</th>
-              <th>Key Goods</th>
-            </tr>
-          </thead>
-          <tbody id="tradeTableBody">
-          </tbody>
-        </table>
-      </div>
-      
-      <div id="supplyTab" class="tab-content" style="display: none;">
-        <div class="supply-chain" id="supplyChainContainer">
-        </div>
-      </div>
-      
-      <div id="currencyTab" class="tab-content" style="display: none;">
-        <div class="parameter-controls">
-          <div class="control-item">
-            <div class="control-label">
-              <span>Exchange rate vs USD</span>
-              <span class="control-value" id="exchangeValue">1.00</span>
-            </div>
-            <input type="range" id="exchangeSlider" min="0.5" max="2" step="0.01" value="1">
-          </div>
-          <div class="control-item">
-            <div class="control-label">
-              <span>Interest rate</span>
-              <span class="control-value" id="interestValue">5.25%</span>
-            </div>
-            <input type="range" id="interestSlider" min="0" max="15" step="0.25" value="5.25">
-          </div>
-          <div class="control-item">
-            <div class="control-label">
-              <span>Money supply growth</span>
-              <span class="control-value" id="moneyValue">6.5%</span>
-            </div>
-            <input type="range" id="moneySlider" min="-5" max="20" step="0.5" value="6.5">
-          </div>
-        </div>
-        
-        <div class="chart-container">
-          <canvas id="currencyChart"></canvas>
-        </div>
-      </div>
-      
-      <div id="eventsTab" class="tab-content" style="display: none;">
-        <div class="event-log" id="eventLog">
-        </div>
-      </div>
-    </div>
-  </div>
+  </main>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+// Extended country database with all major economies
 const countries = {
   usa: {
     name: 'United States',
-    gdp: 25.4,
+    flag: '🇺🇸',
+    region: 'North America',
+    gdp: 25.46,
+    gdpGrowth: 2.1,
     inflation: 3.2,
     unemployment: 3.8,
     debt: 123,
-    gdpGrowth: 2.1,
     tradeBalance: -800,
+    exports: 2100,
+    imports: 2900,
     fxReserves: 130,
     military: 3.4,
     productivity: 72,
     laborForce: 164,
     aiLevel: 15,
     stemGrads: 568,
-    exchangeRate: 1.0,
     interestRate: 5.25,
     moneySupply: 6.5,
+    deficit: -5.4,
+    gdpPerCapita: 76398,
+    rdSpending: 3.1,
     trade: [
-      { partner: 'China', exports: 151, imports: 537, goods: 'Electronics, machinery' },
-      { partner: 'Mexico', exports: 323, imports: 455, goods: 'Vehicles, electronics' },
-      { partner: 'Canada', exports: 356, imports: 437, goods: 'Energy, vehicles' },
-      { partner: 'Japan', exports: 80, imports: 148, goods: 'Vehicles, machinery' },
-      { partner: 'Germany', exports: 65, imports: 146, goods: 'Vehicles, pharmaceuticals' }
+      { partner: 'China', exports: 151, imports: 537, goods: 'Electronics, machinery', pct: 18.2 },
+      { partner: 'Mexico', exports: 323, imports: 455, goods: 'Vehicles, electronics', pct: 15.6 },
+      { partner: 'Canada', exports: 356, imports: 437, goods: 'Energy, vehicles', pct: 15.9 },
+      { partner: 'Japan', exports: 80, imports: 148, goods: 'Vehicles, machinery', pct: 4.6 },
+      { partner: 'Germany', exports: 65, imports: 146, goods: 'Vehicles, pharmaceuticals', pct: 4.2 }
     ],
     supplyChains: [
-      { name: 'Semiconductors', status: 'warning', flow: 'Taiwan → Korea → USA', risk: 'High geopolitical' },
-      { name: 'Rare earths', status: 'critical', flow: 'China → Processing → USA', risk: 'China dominance 80%' },
-      { name: 'Energy', status: 'healthy', flow: 'Domestic + Canada + Middle East', risk: 'Low' },
-      { name: 'Pharmaceuticals', status: 'warning', flow: 'India + China → USA', risk: 'API concentration' }
+      { name: 'Semiconductors', status: 'warning', flow: 'Taiwan → South Korea → USA', risk: 'High geopolitical dependency on Taiwan fabs' },
+      { name: 'Rare Earth Elements', status: 'critical', flow: 'China mining → Processing → USA', risk: 'China controls 80% of global processing' },
+      { name: 'Energy Supply', status: 'healthy', flow: 'Domestic shale + Canada + Middle East', risk: 'Low risk with diverse sources' },
+      { name: 'Pharmaceuticals', status: 'warning', flow: 'India + China APIs → USA', risk: 'API concentration in Asia 70%+' }
     ]
   },
   china: {
     name: 'China',
-    gdp: 17.9,
+    flag: '🇨🇳',
+    region: 'East Asia',
+    gdp: 17.96,
+    gdpGrowth: 5.2,
     inflation: 2.0,
     unemployment: 5.2,
     debt: 77,
-    gdpGrowth: 5.2,
     tradeBalance: 823,
+    exports: 3600,
+    imports: 2777,
     fxReserves: 3200,
     military: 1.7,
     productivity: 28,
     laborForce: 780,
     aiLevel: 22,
     stemGrads: 4700,
-    exchangeRate: 7.2,
     interestRate: 3.45,
     moneySupply: 8.9,
+    deficit: -2.8,
+    gdpPerCapita: 12720,
+    rdSpending: 2.4,
     trade: [
-      { partner: 'USA', exports: 537, imports: 151, goods: 'Electronics, machinery' },
-      { partner: 'ASEAN', exports: 642, imports: 512, goods: 'Electronics, components' },
-      { partner: 'EU', exports: 515, imports: 253, goods: 'Machinery, chemicals' },
-      { partner: 'Japan', exports: 166, imports: 171, goods: 'Electronics, steel' },
-      { partner: 'Korea', exports: 163, imports: 136, goods: 'Semiconductors, displays' }
+      { partner: 'USA', exports: 537, imports: 151, goods: 'Electronics, machinery', pct: 16.8 },
+      { partner: 'ASEAN', exports: 642, imports: 512, goods: 'Electronics, components', pct: 17.8 },
+      { partner: 'EU', exports: 515, imports: 253, goods: 'Machinery, chemicals', pct: 11.8 },
+      { partner: 'Japan', exports: 166, imports: 171, goods: 'Electronics, steel', pct: 5.2 },
+      { partner: 'South Korea', exports: 163, imports: 136, goods: 'Semiconductors, displays', pct: 4.6 }
     ],
     supplyChains: [
-      { name: 'Rare earths', status: 'healthy', flow: 'Domestic mining → Processing → Export', risk: 'Strategic leverage' },
-      { name: 'Solar panels', status: 'healthy', flow: 'Domestic → Global', risk: 'Market dominance 80%' },
-      { name: 'Semiconductors', status: 'warning', flow: 'Imports → Assembly → Export', risk: 'Taiwan dependence' },
-      { name: 'Electronics assembly', status: 'healthy', flow: 'ASEAN → China → World', risk: 'Labor costs rising' }
-    ]
-  },
-  korea: {
-    name: 'South Korea',
-    gdp: 1.7,
-    inflation: 2.3,
-    unemployment: 2.9,
-    debt: 51,
-    gdpGrowth: 1.4,
-    tradeBalance: 40,
-    fxReserves: 420,
-    military: 2.8,
-    productivity: 45,
-    laborForce: 28,
-    aiLevel: 18,
-    stemGrads: 195,
-    exchangeRate: 1300,
-    interestRate: 3.5,
-    moneySupply: 5.2,
-    trade: [
-      { partner: 'China', exports: 136, imports: 163, goods: 'Semiconductors, displays' },
-      { partner: 'USA', exports: 115, imports: 78, goods: 'Vehicles, electronics' },
-      { partner: 'Vietnam', exports: 58, imports: 25, goods: 'Components, machinery' },
-      { partner: 'Japan', exports: 30, imports: 55, goods: 'Materials, machinery' },
-      { partner: 'Taiwan', exports: 22, imports: 18, goods: 'Semiconductors' }
-    ],
-    supplyChains: [
-      { name: 'Semiconductors', status: 'healthy', flow: 'Domestic fab → Global', risk: 'Critical chokepoint' },
-      { name: 'Displays', status: 'healthy', flow: 'Domestic → Electronics OEMs', risk: 'China competition' },
-      { name: 'Shipbuilding', status: 'healthy', flow: 'Domestic → Global', risk: 'Market leader 45%' },
-      { name: 'Batteries', status: 'warning', flow: 'Korea → EV makers', risk: 'China lithium dependence' }
-    ]
-  },
-  germany: {
-    name: 'Germany',
-    gdp: 4.3,
-    inflation: 5.9,
-    unemployment: 3.0,
-    debt: 66,
-    gdpGrowth: -0.3,
-    tradeBalance: 180,
-    fxReserves: 280,
-    military: 1.5,
-    productivity: 68,
-    laborForce: 45,
-    aiLevel: 12,
-    stemGrads: 220,
-    exchangeRate: 0.92,
-    interestRate: 4.5,
-    moneySupply: 4.1,
-    trade: [
-      { partner: 'USA', exports: 146, imports: 65, goods: 'Vehicles, machinery' },
-      { partner: 'China', exports: 107, imports: 142, goods: 'Vehicles, machinery' },
-      { partner: 'France', exports: 119, imports: 89, goods: 'Vehicles, machinery' },
-      { partner: 'Netherlands', exports: 109, imports: 122, goods: 'Chemicals, machinery' },
-      { partner: 'Italy', exports: 79, imports: 62, goods: 'Vehicles, machinery' }
-    ],
-    supplyChains: [
-      { name: 'Automotive', status: 'warning', flow: 'Germany → Global', risk: 'EV transition lag' },
-      { name: 'Energy', status: 'critical', flow: 'Russia gas → Alternatives', risk: 'Energy crisis ongoing' },
-      { name: 'Chemicals', status: 'warning', flow: 'Domestic → Global', risk: 'High energy costs' },
-      { name: 'Machinery', status: 'healthy', flow: 'Domestic → Global', risk: 'China competition' }
+      { name: 'Rare Earth Processing', status: 'healthy', flow: 'Domestic mining → Processing → Export', risk: 'Strategic leverage - 80% market share' },
+      { name: 'Solar Panels', status: 'healthy', flow: 'Domestic → Global', risk: 'Market dominance 80%+' },
+      { name: 'Semiconductors', status: 'warning', flow: 'Imports → Assembly → Export', risk: 'Taiwan TSMC dependency for advanced nodes' },
+      { name: 'Electronics Assembly', status: 'healthy', flow: 'ASEAN components → China → World', risk: 'Labor cost pressure' }
     ]
   },
   japan: {
     name: 'Japan',
-    gdp: 4.2,
+    flag: '🇯🇵',
+    region: 'East Asia',
+    gdp: 4.23,
+    gdpGrowth: 1.9,
     inflation: 3.3,
     unemployment: 2.6,
     debt: 264,
-    gdpGrowth: 1.9,
     tradeBalance: -38,
+    exports: 915,
+    imports: 953,
     fxReserves: 1200,
     military: 1.1,
     productivity: 49,
     laborForce: 69,
     aiLevel: 14,
     stemGrads: 185,
-    exchangeRate: 149,
     interestRate: 0.25,
     moneySupply: 3.8,
+    deficit: -3.2,
+    gdpPerCapita: 33815,
+    rdSpending: 3.3,
     trade: [
-      { partner: 'China', exports: 171, imports: 166, goods: 'Machinery, components' },
-      { partner: 'USA', exports: 148, imports: 80, goods: 'Vehicles, machinery' },
-      { partner: 'Korea', exports: 55, imports: 30, goods: 'Materials, components' },
-      { partner: 'Taiwan', exports: 48, imports: 35, goods: 'Semiconductors' },
-      { partner: 'Thailand', exports: 39, imports: 28, goods: 'Vehicles, machinery' }
+      { partner: 'China', exports: 171, imports: 166, goods: 'Machinery, components', pct: 18.0 },
+      { partner: 'USA', exports: 148, imports: 80, goods: 'Vehicles, machinery', pct: 12.2 },
+      { partner: 'South Korea', exports: 55, imports: 30, goods: 'Materials, components', pct: 4.5 },
+      { partner: 'Taiwan', exports: 48, imports: 35, goods: 'Semiconductors', pct: 4.4 },
+      { partner: 'Thailand', exports: 39, imports: 28, goods: 'Vehicles, machinery', pct: 3.6 }
     ],
     supplyChains: [
-      { name: 'Advanced materials', status: 'healthy', flow: 'Japan → Electronics', risk: 'Niche dominance' },
-      { name: 'Robotics', status: 'healthy', flow: 'Japan → Manufacturing', risk: 'Automation leader' },
-      { name: 'Automotive', status: 'warning', flow: 'Japan → Global', risk: 'EV transition' },
-      { name: 'Semiconductors', status: 'warning', flow: 'Materials → Fabs', risk: 'Lost leadership' }
+      { name: 'Advanced Materials', status: 'healthy', flow: 'Japan → Global electronics', risk: 'Niche dominance in specialty chemicals' },
+      { name: 'Industrial Robotics', status: 'healthy', flow: 'Japan → Global manufacturing', risk: 'Market leader with 45% share' },
+      { name: 'Automotive', status: 'warning', flow: 'Japan → Global', risk: 'EV transition lagging Western/Chinese OEMs' },
+      { name: 'Semiconductor Equipment', status: 'warning', flow: 'Materials → Global fabs', risk: 'Lost fab leadership to TSMC/Samsung' }
+    ]
+  },
+  germany: {
+    name: 'Germany',
+    flag: '🇩🇪',
+    region: 'Europe',
+    gdp: 4.31,
+    gdpGrowth: -0.3,
+    inflation: 5.9,
+    unemployment: 3.0,
+    debt: 66,
+    tradeBalance: 180,
+    exports: 1630,
+    imports: 1450,
+    fxReserves: 280,
+    military: 1.5,
+    productivity: 68,
+    laborForce: 45,
+    aiLevel: 12,
+    stemGrads: 220,
+    interestRate: 4.5,
+    moneySupply: 4.1,
+    deficit: -2.6,
+    gdpPerCapita: 51383,
+    rdSpending: 3.1,
+    trade: [
+      { partner: 'USA', exports: 146, imports: 65, goods: 'Vehicles, machinery', pct: 6.8 },
+      { partner: 'China', exports: 107, imports: 142, goods: 'Vehicles, machinery', pct: 8.1 },
+      { partner: 'France', exports: 119, imports: 89, goods: 'Vehicles, machinery', pct: 6.7 },
+      { partner: 'Netherlands', exports: 109, imports: 122, goods: 'Chemicals, machinery', pct: 7.5 },
+      { partner: 'Italy', exports: 79, imports: 62, goods: 'Vehicles, machinery', pct: 4.6 }
+    ],
+    supplyChains: [
+      { name: 'Automotive', status: 'warning', flow: 'Germany → Global', risk: 'EV transition lag behind Tesla/BYD' },
+      { name: 'Energy Supply', status: 'critical', flow: 'Russian gas pivot → LNG/renewables', risk: 'Energy crisis ongoing, high costs' },
+      { name: 'Chemical Industry', status: 'warning', flow: 'Domestic → Global', risk: 'High energy costs eroding competitiveness' },
+      { name: 'Machinery Exports', status: 'healthy', flow: 'Domestic → Global', risk: 'Chinese competition in mid-tier' }
+    ]
+  },
+  india: {
+    name: 'India',
+    flag: '🇮🇳',
+    region: 'South Asia',
+    gdp: 3.74,
+    gdpGrowth: 7.2,
+    inflation: 5.4,
+    unemployment: 7.8,
+    debt: 84,
+    tradeBalance: -280,
+    exports: 770,
+    imports: 1050,
+    fxReserves: 580,
+    military: 2.4,
+    productivity: 21,
+    laborForce: 520,
+    aiLevel: 8,
+    stemGrads: 2600,
+    interestRate: 6.5,
+    moneySupply: 9.2,
+    deficit: -6.4,
+    gdpPerCapita: 2612,
+    rdSpending: 0.7,
+    trade: [
+      { partner: 'USA', exports: 78, imports: 43, goods: 'IT services, textiles', pct: 6.6 },
+      { partner: 'China', exports: 21, imports: 101, goods: 'Electronics, machinery', pct: 6.7 },
+      { partner: 'UAE', exports: 31, imports: 55, goods: 'Petroleum, gold', pct: 4.7 },
+      { partner: 'Saudi Arabia', exports: 9, imports: 45, goods: 'Oil imports', pct: 3.0 },
+      { partner: 'Singapore', exports: 19, imports: 23, goods: 'Electronics, chemicals', pct: 2.3 }
+    ],
+    supplyChains: [
+      { name: 'IT Services', status: 'healthy', flow: 'India → Global tech companies', risk: 'Talent competition from AI automation' },
+      { name: 'Pharmaceuticals', status: 'healthy', flow: 'India APIs → Global', risk: 'Generic drug market leader' },
+      { name: 'Energy Imports', status: 'critical', flow: 'Middle East → India', risk: '85% oil import dependency' },
+      { name: 'Electronics', status: 'warning', flow: 'China imports → Domestic assembly', risk: 'China import dependency 70%+' }
+    ]
+  },
+  korea: {
+    name: 'South Korea',
+    flag: '🇰🇷',
+    region: 'East Asia',
+    gdp: 1.71,
+    gdpGrowth: 1.4,
+    inflation: 2.3,
+    unemployment: 2.9,
+    debt: 51,
+    tradeBalance: 40,
+    exports: 685,
+    imports: 645,
+    fxReserves: 420,
+    military: 2.8,
+    productivity: 45,
+    laborForce: 28,
+    aiLevel: 18,
+    stemGrads: 195,
+    interestRate: 3.5,
+    moneySupply: 5.2,
+    deficit: -1.8,
+    gdpPerCapita: 33147,
+    rdSpending: 4.9,
+    trade: [
+      { partner: 'China', exports: 136, imports: 163, goods: 'Semiconductors, displays', pct: 22.5 },
+      { partner: 'USA', exports: 115, imports: 78, goods: 'Vehicles, electronics', pct: 14.5 },
+      { partner: 'Vietnam', exports: 58, imports: 25, goods: 'Components, machinery', pct: 6.2 },
+      { partner: 'Japan', exports: 30, imports: 55, goods: 'Materials, machinery', pct: 6.4 },
+      { partner: 'Taiwan', exports: 22, imports: 18, goods: 'Semiconductors', pct: 3.0 }
+    ],
+    supplyChains: [
+      { name: 'Semiconductors', status: 'healthy', flow: 'Domestic fabs → Global', risk: 'Critical chokepoint - Samsung/SK Hynix' },
+      { name: 'Display Panels', status: 'healthy', flow: 'Domestic → Electronics OEMs', risk: 'Chinese BOE competition rising' },
+      { name: 'Shipbuilding', status: 'healthy', flow: 'Domestic → Global', risk: 'Market leader 45% of orders' },
+      { name: 'EV Batteries', status: 'warning', flow: 'Korea → Global EV makers', risk: 'China lithium dependency 85%' }
+    ]
+  },
+  uk: {
+    name: 'United Kingdom',
+    flag: '🇬🇧',
+    region: 'Europe',
+    gdp: 3.34,
+    gdpGrowth: 0.5,
+    inflation: 4.0,
+    unemployment: 4.2,
+    debt: 101,
+    tradeBalance: -142,
+    exports: 510,
+    imports: 652,
+    fxReserves: 180,
+    military: 2.3,
+    productivity: 58,
+    laborForce: 34,
+    aiLevel: 11,
+    stemGrads: 142,
+    interestRate: 5.25,
+    moneySupply: 5.7,
+    deficit: -4.5,
+    gdpPerCapita: 49675,
+    rdSpending: 1.7,
+    trade: [
+      { partner: 'USA', exports: 65, imports: 58, goods: 'Vehicles, pharmaceuticals', pct: 10.6 },
+      { partner: 'Germany', exports: 45, imports: 78, goods: 'Vehicles, machinery', pct: 10.6 },
+      { partner: 'Netherlands', exports: 38, imports: 52, goods: 'Chemicals, machinery', pct: 7.7 },
+      { partner: 'China', exports: 22, imports: 68, goods: 'Electronics, machinery', pct: 7.7 },
+      { partner: 'France', exports: 31, imports: 41, goods: 'Vehicles, food', pct: 6.2 }
+    ],
+    supplyChains: [
+      { name: 'Financial Services', status: 'healthy', flow: 'London → Global', risk: 'Post-Brexit regulatory divergence' },
+      { name: 'Pharmaceuticals', status: 'healthy', flow: 'UK R&D → Global', risk: 'AstraZeneca, GSK remain competitive' },
+      { name: 'Energy', status: 'warning', flow: 'North Sea + imports', risk: 'Declining North Sea production' },
+      { name: 'Automotive', status: 'critical', flow: 'UK assembly → EU/Global', risk: 'Brexit supply chain friction' }
+    ]
+  },
+  france: {
+    name: 'France',
+    flag: '🇫🇷',
+    region: 'Europe',
+    gdp: 3.05,
+    gdpGrowth: 0.9,
+    inflation: 4.9,
+    unemployment: 7.3,
+    debt: 112,
+    tradeBalance: -95,
+    exports: 595,
+    imports: 690,
+    fxReserves: 220,
+    military: 1.9,
+    productivity: 71,
+    laborForce: 31,
+    aiLevel: 10,
+    stemGrads: 128,
+    interestRate: 4.5,
+    moneySupply: 4.3,
+    deficit: -4.9,
+    gdpPerCapita: 45454,
+    rdSpending: 2.2,
+    trade: [
+      { partner: 'Germany', exports: 89, imports: 119, goods: 'Vehicles, machinery', pct: 16.2 },
+      { partner: 'USA', exports: 48, imports: 41, goods: 'Aircraft, wine', pct: 6.9 },
+      { partner: 'Italy', exports: 52, imports: 50, goods: 'Vehicles, machinery', pct: 7.9 },
+      { partner: 'Spain', exports: 48, imports: 44, goods: 'Vehicles, chemicals', pct: 7.2 },
+      { partner: 'Belgium', exports: 43, imports: 48, goods: 'Chemicals, machinery', pct: 7.1 }
+    ],
+    supplyChains: [
+      { name: 'Aerospace', status: 'healthy', flow: 'France → Global', risk: 'Airbus leadership position strong' },
+      { name: 'Nuclear Energy', status: 'healthy', flow: 'Domestic → 70% electricity', risk: 'Aging reactor fleet maintenance' },
+      { name: 'Luxury Goods', status: 'healthy', flow: 'France → Global', risk: 'LVMH, Hermès market dominance' },
+      { name: 'Agriculture', status: 'healthy', flow: 'France → EU/Global', risk: 'CAP subsidy dependency' }
+    ]
+  },
+  brazil: {
+    name: 'Brazil',
+    flag: '🇧🇷',
+    region: 'South America',
+    gdp: 2.13,
+    gdpGrowth: 2.9,
+    inflation: 4.6,
+    unemployment: 8.5,
+    debt: 88,
+    tradeBalance: 62,
+    exports: 335,
+    imports: 273,
+    fxReserves: 340,
+    military: 1.4,
+    productivity: 24,
+    laborForce: 107,
+    aiLevel: 6,
+    stemGrads: 185,
+    interestRate: 12.75,
+    moneySupply: 7.8,
+    deficit: -6.1,
+    gdpPerCapita: 9924,
+    rdSpending: 1.2,
+    trade: [
+      { partner: 'China', exports: 88, imports: 52, goods: 'Soybeans, iron ore', pct: 23.0 },
+      { partner: 'USA', exports: 31, imports: 41, goods: 'Oil, machinery', pct: 11.8 },
+      { partner: 'Argentina', exports: 14, imports: 13, goods: 'Vehicles, machinery', pct: 4.4 },
+      { partner: 'Netherlands', exports: 12, imports: 5, goods: 'Agriculture', pct: 2.8 },
+      { partner: 'Germany', exports: 7, imports: 13, goods: 'Vehicles, machinery', pct: 3.3 }
+    ],
+    supplyChains: [
+      { name: 'Agricultural Exports', status: 'healthy', flow: 'Brazil → China/Global', risk: 'World leader in soybeans, coffee, sugar' },
+      { name: 'Iron Ore', status: 'healthy', flow: 'Brazil → China steel mills', risk: 'Vale mining dominance' },
+      { name: 'Oil Production', status: 'healthy', flow: 'Pre-salt fields → Domestic/export', risk: 'Petrobras deep-water expertise' },
+      { name: 'Manufacturing', status: 'warning', flow: 'Domestic → Regional', risk: 'De-industrialization trend' }
+    ]
+  },
+  canada: {
+    name: 'Canada',
+    flag: '🇨🇦',
+    region: 'North America',
+    gdp: 2.14,
+    gdpGrowth: 1.1,
+    inflation: 3.6,
+    unemployment: 5.4,
+    debt: 106,
+    tradeBalance: 14,
+    exports: 595,
+    imports: 581,
+    fxReserves: 110,
+    military: 1.3,
+    productivity: 56,
+    laborForce: 21,
+    aiLevel: 9,
+    stemGrads: 78,
+    interestRate: 5.0,
+    moneySupply: 6.1,
+    deficit: -1.3,
+    gdpPerCapita: 55036,
+    rdSpending: 1.6,
+    trade: [
+      { partner: 'USA', exports: 437, imports: 356, goods: 'Energy, vehicles', pct: 67.4 },
+      { partner: 'China', exports: 27, imports: 58, goods: 'Resources, electronics', pct: 7.2 },
+      { partner: 'Mexico', exports: 8, imports: 18, goods: 'Vehicles, machinery', pct: 2.2 },
+      { partner: 'UK', exports: 15, imports: 8, goods: 'Resources, vehicles', pct: 2.0 },
+      { partner: 'Japan', exports: 12, imports: 14, goods: 'Resources, vehicles', pct: 2.2 }
+    ],
+    supplyChains: [
+      { name: 'Energy Exports', status: 'healthy', flow: 'Canada → USA primarily', risk: 'Oil sands, natural gas pipelines' },
+      { name: 'Automotive', status: 'healthy', flow: 'USMCA integrated → North America', risk: 'Tight integration with US Big 3' },
+      { name: 'Mining', status: 'healthy', flow: 'Canada → Global', risk: 'Major producer potash, uranium, nickel' },
+      { name: 'Lumber', status: 'warning', flow: 'Canada → USA/Global', risk: 'US softwood lumber disputes' }
+    ]
+  },
+  italy: {
+    name: 'Italy',
+    flag: '🇮🇹',
+    region: 'Europe',
+    gdp: 2.19,
+    gdpGrowth: 0.7,
+    inflation: 5.9,
+    unemployment: 7.8,
+    debt: 144,
+    tradeBalance: 45,
+    exports: 625,
+    imports: 580,
+    fxReserves: 220,
+    military: 1.5,
+    productivity: 55,
+    laborForce: 26,
+    aiLevel: 8,
+    stemGrads: 95,
+    interestRate: 4.5,
+    moneySupply: 3.9,
+    deficit: -7.2,
+    gdpPerCapita: 37146,
+    rdSpending: 1.5,
+    trade: [
+      { partner: 'Germany', exports: 62, imports: 79, goods: 'Vehicles, machinery', pct: 11.7 },
+      { partner: 'France', exports: 50, imports: 52, goods: 'Vehicles, machinery', pct: 8.5 },
+      { partner: 'USA', exports: 55, imports: 28, goods: 'Machinery, fashion', pct: 6.9 },
+      { partner: 'Spain', exports: 32, imports: 30, goods: 'Vehicles, machinery', pct: 5.1 },
+      { partner: 'China', exports: 16, imports: 45, goods: 'Machinery, electronics', pct: 5.1 }
+    ],
+    supplyChains: [
+      { name: 'Luxury Fashion', status: 'healthy', flow: 'Italy → Global', risk: 'Gucci, Prada, Armani brands strong' },
+      { name: 'Automotive', status: 'warning', flow: 'Italy → EU/Global', risk: 'Ferrari niche, Stellantis EU-wide' },
+      { name: 'Machinery', status: 'healthy', flow: 'Italy → Global', risk: 'SME manufacturing network' },
+      { name: 'Energy', status: 'critical', flow: 'Imports → Italy', risk: '75% energy import dependency' }
+    ]
+  },
+  australia: {
+    name: 'Australia',
+    flag: '🇦🇺',
+    region: 'Oceania',
+    gdp: 1.73,
+    gdpGrowth: 1.8,
+    inflation: 5.4,
+    unemployment: 3.7,
+    debt: 57,
+    tradeBalance: 95,
+    exports: 420,
+    imports: 325,
+    fxReserves: 65,
+    military: 2.0,
+    productivity: 61,
+    laborForce: 14,
+    aiLevel: 10,
+    stemGrads: 58,
+    interestRate: 4.35,
+    moneySupply: 6.8,
+    deficit: -1.9,
+    gdpPerCapita: 66589,
+    rdSpending: 1.8,
+    trade: [
+      { partner: 'China', exports: 165, imports: 85, goods: 'Iron ore, coal, LNG', pct: 33.5 },
+      { partner: 'Japan', exports: 55, imports: 22, goods: 'Coal, LNG', pct: 10.3 },
+      { partner: 'South Korea', exports: 28, imports: 15, goods: 'Coal, LNG', pct: 5.8 },
+      { partner: 'USA', exports: 18, imports: 32, goods: 'Beef, wine', pct: 6.7 },
+      { partner: 'India', exports: 22, imports: 9, goods: 'Coal, gold', pct: 4.2 }
+    ],
+    supplyChains: [
+      { name: 'Mining Exports', status: 'healthy', flow: 'Australia → Asia', risk: 'Iron ore, coal leader - China dependency' },
+      { name: 'LNG Exports', status: 'healthy', flow: 'Australia → Asia', risk: 'World top LNG exporter' },
+      { name: 'Agriculture', status: 'healthy', flow: 'Australia → Asia/Global', risk: 'Wheat, beef, wine exports' },
+      { name: 'Education Services', status: 'warning', flow: 'International students → Australia', risk: 'Post-COVID recovery slow' }
+    ]
+  },
+  mexico: {
+    name: 'Mexico',
+    flag: '🇲🇽',
+    region: 'North America',
+    gdp: 1.79,
+    gdpGrowth: 3.3,
+    inflation: 4.7,
+    unemployment: 2.9,
+    debt: 60,
+    tradeBalance: -28,
+    exports: 590,
+    imports: 618,
+    fxReserves: 200,
+    military: 0.6,
+    productivity: 30,
+    laborForce: 58,
+    aiLevel: 7,
+    stemGrads: 142,
+    interestRate: 11.25,
+    moneySupply: 8.3,
+    deficit: -3.7,
+    gdpPerCapita: 13804,
+    rdSpending: 0.3,
+    trade: [
+      { partner: 'USA', exports: 455, imports: 323, goods: 'Vehicles, electronics', pct: 64.4 },
+      { partner: 'China', exports: 9, imports: 106, goods: 'Electronics, machinery', pct: 9.5 },
+      { partner: 'Canada', exports: 18, imports: 8, goods: 'Vehicles, machinery', pct: 2.2 },
+      { partner: 'Germany', exports: 7, imports: 18, goods: 'Vehicles, machinery', pct: 2.1 },
+      { partner: 'South Korea', exports: 4, imports: 14, goods: 'Electronics', pct: 1.5 }
+    ],
+    supplyChains: [
+      { name: 'Automotive', status: 'healthy', flow: 'USMCA integrated → North America', risk: 'Nearshoring beneficiary from China+1' },
+      { name: 'Electronics Assembly', status: 'healthy', flow: 'Mexico → USA', risk: 'Nearshoring growth in semiconductors' },
+      { name: 'Oil Production', status: 'warning', flow: 'Pemex → Domestic/export', risk: 'Declining production, underinvestment' },
+      { name: 'Agriculture', status: 'healthy', flow: 'Mexico → USA/Global', risk: 'Avocados, berries, vegetables' }
+    ]
+  },
+  spain: {
+    name: 'Spain',
+    flag: '🇪🇸',
+    region: 'Europe',
+    gdp: 1.58,
+    gdpGrowth: 2.5,
+    inflation: 3.4,
+    unemployment: 12.9,
+    debt: 113,
+    tradeBalance: -45,
+    exports: 425,
+    imports: 470,
+    fxReserves: 85,
+    military: 1.3,
+    productivity: 59,
+    laborForce: 24,
+    aiLevel: 9,
+    stemGrads: 82,
+    interestRate: 4.5,
+    moneySupply: 4.2,
+    deficit: -3.6,
+    gdpPerCapita: 33163,
+    rdSpending: 1.4,
+    trade: [
+      { partner: 'France', exports: 44, imports: 48, goods: 'Vehicles, food', pct: 10.3 },
+      { partner: 'Germany', exports: 40, imports: 50, goods: 'Vehicles, machinery', pct: 10.1 },
+      { partner: 'Italy', exports: 30, imports: 32, goods: 'Vehicles, machinery', pct: 6.9 },
+      { partner: 'Portugal', exports: 28, imports: 15, goods: 'Vehicles, food', pct: 4.8 },
+      { partner: 'USA', exports: 15, imports: 22, goods: 'Food, vehicles', pct: 4.1 }
+    ],
+    supplyChains: [
+      { name: 'Tourism', status: 'healthy', flow: 'Global → Spain', risk: 'World #2 tourism destination' },
+      { name: 'Automotive', status: 'healthy', flow: 'Spain → EU/Global', risk: 'Major EU production hub' },
+      { name: 'Agriculture', status: 'healthy', flow: 'Spain → EU/Global', risk: 'Olive oil, wine, fruits leader' },
+      { name: 'Renewable Energy', status: 'healthy', flow: 'Domestic → Grid', risk: 'Solar/wind capacity growth' }
+    ]
+  },
+  indonesia: {
+    name: 'Indonesia',
+    flag: '🇮🇩',
+    region: 'Southeast Asia',
+    gdp: 1.39,
+    gdpGrowth: 5.3,
+    inflation: 3.2,
+    unemployment: 5.3,
+    debt: 39,
+    tradeBalance: 52,
+    exports: 292,
+    imports: 240,
+    fxReserves: 145,
+    military: 0.9,
+    productivity: 18,
+    laborForce: 144,
+    aiLevel: 5,
+    stemGrads: 412,
+    interestRate: 6.0,
+    moneySupply: 10.2,
+    deficit: -2.4,
+    gdpPerCapita: 5016,
+    rdSpending: 0.3,
+    trade: [
+      { partner: 'China', exports: 58, imports: 68, goods: 'Coal, palm oil', pct: 23.7 },
+      { partner: 'USA', exports: 24, imports: 15, goods: 'Textiles, electronics', pct: 7.3 },
+      { partner: 'Japan', exports: 22, imports: 20, goods: 'Coal, LNG', pct: 7.9 },
+      { partner: 'Singapore', exports: 18, imports: 28, goods: 'Resources, electronics', pct: 8.6 },
+      { partner: 'India', exports: 16, imports: 8, goods: 'Coal, palm oil', pct: 4.5 }
+    ],
+    supplyChains: [
+      { name: 'Palm Oil', status: 'healthy', flow: 'Indonesia → Global', risk: 'World leader 60% production' },
+      { name: 'Coal Exports', status: 'healthy', flow: 'Indonesia → Asia', risk: 'Top thermal coal exporter' },
+      { name: 'Nickel', status: 'healthy', flow: 'Indonesia → EV battery supply', risk: 'Processing ban boosting domestic value-add' },
+      { name: 'Textiles', status: 'warning', flow: 'Indonesia → Global', risk: 'Vietnam/Bangladesh competition' }
+    ]
+  },
+  netherlands: {
+    name: 'Netherlands',
+    flag: '🇳🇱',
+    region: 'Europe',
+    gdp: 1.12,
+    gdpGrowth: 0.1,
+    inflation: 4.0,
+    unemployment: 3.6,
+    debt: 47,
+    tradeBalance: 85,
+    exports: 835,
+    imports: 750,
+    fxReserves: 65,
+    military: 1.5,
+    productivity: 73,
+    laborForce: 10,
+    aiLevel: 13,
+    stemGrads: 42,
+    interestRate: 4.5,
+    moneySupply: 3.8,
+    deficit: -0.3,
+    gdpPerCapita: 63750,
+    rdSpending: 2.3,
+    trade: [
+      { partner: 'Germany', exports: 122, imports: 109, goods: 'Chemicals, machinery', pct: 14.6 },
+      { partner: 'Belgium', exports: 78, imports: 68, goods: 'Chemicals, petroleum', pct: 9.2 },
+      { partner: 'France', exports: 52, imports: 38, goods: 'Machinery, chemicals', pct: 5.7 },
+      { partner: 'UK', exports: 52, imports: 38, goods: 'Machinery, food', pct: 5.7 },
+      { partner: 'USA', exports: 55, imports: 45, goods: 'Machinery, chemicals', pct: 6.3 }
+    ],
+    supplyChains: [
+      { name: 'Port of Rotterdam', status: 'healthy', flow: 'EU gateway → Distribution', risk: 'Europe largest port' },
+      { name: 'Chemicals', status: 'healthy', flow: 'Netherlands → EU/Global', risk: 'Petrochemical cluster strength' },
+      { name: 'Agriculture Tech', status: 'healthy', flow: 'Netherlands → Global', risk: 'World #2 ag exporter by value' },
+      { name: 'ASML', status: 'critical', flow: 'Netherlands → Global chip fabs', risk: 'EUV lithography monopoly' }
+    ]
+  },
+  russia: {
+    name: 'Russia',
+    flag: '🇷🇺',
+    region: 'Eurasia',
+    gdp: 2.24,
+    gdpGrowth: -2.1,
+    inflation: 7.5,
+    unemployment: 3.3,
+    debt: 17,
+    tradeBalance: 238,
+    exports: 520,
+    imports: 282,
+    fxReserves: 580,
+    military: 4.1,
+    productivity: 32,
+    laborForce: 75,
+    aiLevel: 6,
+    stemGrads: 285,
+    interestRate: 16.0,
+    moneySupply: 12.5,
+    deficit: -2.0,
+    gdpPerCapita: 15345,
+    rdSpending: 1.1,
+    trade: [
+      { partner: 'China', exports: 110, imports: 78, goods: 'Oil, gas, coal', pct: 23.5 },
+      { partner: 'India', exports: 45, imports: 8, goods: 'Oil, weapons', pct: 6.6 },
+      { partner: 'Turkey', exports: 28, imports: 22, goods: 'Gas, grain', pct: 6.2 },
+      { partner: 'Belarus', exports: 22, imports: 15, goods: 'Oil, gas', pct: 4.6 },
+      { partner: 'Kazakhstan', exports: 18, imports: 12, goods: 'Machinery, food', pct: 3.7 }
+    ],
+    supplyChains: [
+      { name: 'Energy Exports', status: 'critical', flow: 'Russia → Asia (post-sanctions)', risk: 'EU sanctions redirecting to Asia' },
+      { name: 'Grain Exports', status: 'warning', flow: 'Russia → Global', risk: 'Black Sea export disruptions' },
+      { name: 'Fertilizers', status: 'warning', flow: 'Russia → Global', risk: 'Sanctions impacting supply' },
+      { name: 'Metals', status: 'warning', flow: 'Russia → Global', risk: 'Palladium, nickel, aluminum' }
+    ]
+  },
+  turkey: {
+    name: 'Turkey',
+    flag: '🇹🇷',
+    region: 'Middle East',
+    gdp: 1.11,
+    gdpGrowth: 4.5,
+    inflation: 64.8,
+    unemployment: 10.2,
+    debt: 37,
+    tradeBalance: -72,
+    exports: 255,
+    imports: 327,
+    fxReserves: 130,
+    military: 1.3,
+    productivity: 35,
+    laborForce: 32,
+    aiLevel: 5,
+    stemGrads: 158,
+    interestRate: 45.0,
+    moneySupply: 65.2,
+    deficit: -5.4,
+    gdpPerCapita: 12765,
+    rdSpending: 1.1,
+    trade: [
+      { partner: 'Germany', exports: 21, imports: 28, goods: 'Vehicles, machinery', pct: 8.4 },
+      { partner: 'Russia', exports: 22, imports: 28, goods: 'Food, gas imports', pct: 8.6 },
+      { partner: 'China', exports: 5, imports: 38, goods: 'Electronics, machinery', pct: 7.4 },
+      { partner: 'USA', exports: 14, imports: 15, goods: 'Textiles, machinery', pct: 5.0 },
+      { partner: 'Iraq', exports: 12, imports: 3, goods: 'Construction, food', pct: 2.6 }
+    ],
+    supplyChains: [
+      { name: 'Automotive', status: 'healthy', flow: 'Turkey → EU/Middle East', risk: 'Major production hub' },
+      { name: 'Textiles', status: 'healthy', flow: 'Turkey → EU', risk: 'Fast fashion supply chain' },
+      { name: 'Energy Transit', status: 'warning', flow: 'Russia/Azerbaijan → Turkey → EU', risk: 'Strategic pipeline location' },
+      { name: 'Construction', status: 'warning', flow: 'Turkey → Middle East/Africa', risk: 'Lira volatility' }
+    ]
+  },
+  saudiarabia: {
+    name: 'Saudi Arabia',
+    flag: '🇸🇦',
+    region: 'Middle East',
+    gdp: 1.11,
+    gdpGrowth: 3.7,
+    inflation: 2.3,
+    unemployment: 4.8,
+    debt: 26,
+    tradeBalance: 142,
+    exports: 410,
+    imports: 268,
+    fxReserves: 430,
+    military: 6.6,
+    productivity: 68,
+    laborForce: 16,
+    aiLevel: 7,
+    stemGrads: 45,
+    interestRate: 5.5,
+    moneySupply: 7.2,
+    deficit: -1.6,
+    gdpPerCapita: 30447,
+    rdSpending: 0.8,
+    trade: [
+      { partner: 'China', exports: 90, imports: 42, goods: 'Crude oil', pct: 19.5 },
+      { partner: 'India', exports: 45, imports: 9, goods: 'Crude oil', pct: 8.0 },
+      { partner: 'Japan', exports: 42, imports: 8, goods: 'Crude oil', pct: 7.4 },
+      { partner: 'South Korea', exports: 38, imports: 7, goods: 'Crude oil', pct: 6.6 },
+      { partner: 'USA', exports: 28, imports: 22, goods: 'Crude oil, machinery', pct: 7.4 }
+    ],
+    supplyChains: [
+      { name: 'Oil Production', status: 'healthy', flow: 'Saudi Arabia → Asia/Global', risk: 'OPEC+ swing producer' },
+      { name: 'Petrochemicals', status: 'healthy', flow: 'Saudi Aramco → Global', risk: 'SABIC integration' },
+      { name: 'Vision 2030', status: 'warning', flow: 'Diversification → Non-oil sectors', risk: 'Oil dependency still 40% GDP' },
+      { name: 'Neom Project', status: 'warning', flow: 'Mega-projects → Economic transformation', risk: 'Execution risk, capital intensive' }
+    ]
+  },
+  poland: {
+    name: 'Poland',
+    flag: '🇵🇱',
+    region: 'Europe',
+    gdp: 0.81,
+    gdpGrowth: 0.2,
+    inflation: 10.9,
+    unemployment: 2.9,
+    debt: 49,
+    tradeBalance: -22,
+    exports: 375,
+    imports: 397,
+    fxReserves: 180,
+    military: 2.4,
+    productivity: 42,
+    laborForce: 18,
+    aiLevel: 7,
+    stemGrads: 92,
+    interestRate: 5.75,
+    moneySupply: 8.8,
+    deficit: -5.1,
+    gdpPerCapita: 21284,
+    rdSpending: 1.4,
+    trade: [
+      { partner: 'Germany', exports: 90, imports: 75, goods: 'Vehicles, machinery', pct: 21.4 },
+      { partner: 'China', exports: 8, imports: 45, goods: 'Electronics, machinery', pct: 6.9 },
+      { partner: 'Czech Republic', exports: 28, imports: 22, goods: 'Vehicles, machinery', pct: 6.5 },
+      { partner: 'France', exports: 22, imports: 18, goods: 'Vehicles, food', pct: 5.2 },
+      { partner: 'Italy', exports: 18, imports: 22, goods: 'Machinery, food', pct: 5.2 }
+    ],
+    supplyChains: [
+      { name: 'Automotive', status: 'healthy', flow: 'Poland → EU', risk: 'German OEM supply chain hub' },
+      { name: 'Electronics', status: 'healthy', flow: 'Poland → EU', risk: 'LG, Samsung production' },
+      { name: 'Food Processing', status: 'healthy', flow: 'Poland → EU', risk: 'Poultry, dairy, apples' },
+      { name: 'Energy', status: 'warning', flow: 'Coal domestic → Renewables transition', risk: 'Coal dependency 70% electricity' }
+    ]
+  },
+  vietnam: {
+    name: 'Vietnam',
+    flag: '🇻🇳',
+    region: 'Southeast Asia',
+    gdp: 0.43,
+    gdpGrowth: 6.7,
+    inflation: 3.3,
+    unemployment: 2.3,
+    debt: 38,
+    tradeBalance: 28,
+    exports: 372,
+    imports: 344,
+    fxReserves: 95,
+    military: 2.3,
+    productivity: 15,
+    laborForce: 56,
+    aiLevel: 6,
+    stemGrads: 218,
+    interestRate: 4.5,
+    moneySupply: 12.8,
+    deficit: -3.9,
+    gdpPerCapita: 4352,
+    rdSpending: 0.5,
+    trade: [
+      { partner: 'USA', exports: 100, imports: 15, goods: 'Electronics, textiles', pct: 16.1 },
+      { partner: 'China', exports: 55, imports: 120, goods: 'Electronics, machinery', pct: 24.4 },
+      { partner: 'South Korea', exports: 25, imports: 58, goods: 'Electronics, components', pct: 11.6 },
+      { partner: 'Japan', exports: 22, imports: 28, goods: 'Electronics, machinery', pct: 7.0 },
+      { partner: 'Hong Kong', exports: 28, imports: 5, goods: 'Electronics', pct: 4.6 }
+    ],
+    supplyChains: [
+      { name: 'Electronics Assembly', status: 'healthy', flow: 'Vietnam → USA/Global', risk: 'Apple, Samsung supplier base' },
+      { name: 'Textiles & Apparel', status: 'healthy', flow: 'Vietnam → USA/EU', risk: 'Nike, Adidas production hub' },
+      { name: 'Semiconductors', status: 'warning', flow: 'China imports → Assembly → Export', risk: 'China+1 beneficiary' },
+      { name: 'Furniture', status: 'healthy', flow: 'Vietnam → USA/EU', risk: 'Wood furniture exports growing' }
+    ]
+  },
+  switzerland: {
+    name: 'Switzerland',
+    flag: '🇨🇭',
+    region: 'Europe',
+    gdp: 0.91,
+    gdpGrowth: 0.7,
+    inflation: 2.1,
+    unemployment: 2.0,
+    debt: 38,
+    tradeBalance: 88,
+    exports: 485,
+    imports: 397,
+    fxReserves: 950,
+    military: 0.7,
+    productivity: 78,
+    laborForce: 5,
+    aiLevel: 12,
+    stemGrads: 28,
+    interestRate: 1.75,
+    moneySupply: 3.2,
+    deficit: 0.3,
+    gdpPerCapita: 104103,
+    rdSpending: 3.4,
+    trade: [
+      { partner: 'Germany', exports: 72, imports: 90, goods: 'Pharmaceuticals, machinery', pct: 18.4 },
+      { partner: 'USA', exports: 95, imports: 38, goods: 'Pharmaceuticals, watches', pct: 15.1 },
+      { partner: 'France', exports: 38, imports: 42, goods: 'Pharmaceuticals, machinery', pct: 9.1 },
+      { partner: 'Italy', exports: 42, imports: 38, goods: 'Pharmaceuticals, machinery', pct: 9.1 },
+      { partner: 'UK', exports: 38, imports: 22, goods: 'Pharmaceuticals, watches', pct: 6.8 }
+    ],
+    supplyChains: [
+      { name: 'Pharmaceuticals', status: 'healthy', flow: 'Switzerland → Global', risk: 'Roche, Novartis dominance' },
+      { name: 'Luxury Watches', status: 'healthy', flow: 'Switzerland → Global', risk: 'Rolex, Patek Philippe prestige' },
+      { name: 'Financial Services', status: 'healthy', flow: 'Switzerland → Global', risk: 'Banking, wealth management' },
+      { name: 'Precision Machinery', status: 'healthy', flow: 'Switzerland → Global', risk: 'High-value manufacturing' }
     ]
   }
 };
 
 let currentCountry = 'usa';
 let eventCounter = 0;
-let mainChart, currencyChart;
+let mainChart;
 
-function formatCurrency(value) {
-  if (Math.abs(value) >= 1000) {
-    return '$' + (value / 1000).toFixed(1) + 'T';
-  }
-  return '$' + value + 'B';
+function init() {
+  renderCountryList();
+  updateDisplay();
+  initChart();
+  addEvent('System initialized', 'info');
+  addEvent('Ready for economic simulation', 'success');
 }
 
-function updateCountryDisplay() {
-  const country = countries[currentCountry];
+function renderCountryList() {
+  const list = document.getElementById('countryList');
+  list.innerHTML = '';
   
-  document.getElementById('gdpValue').textContent = formatCurrency(country.gdp * 1000);
-  document.getElementById('inflationValue').textContent = country.inflation.toFixed(1) + '%';
-  document.getElementById('unemploymentValue').textContent = country.unemployment.toFixed(1) + '%';
-  document.getElementById('debtValue').textContent = country.debt + '%';
+  Object.entries(countries).forEach(([code, country]) => {
+    const item = document.createElement('div');
+    item.className = `country-item ${code === currentCountry ? 'active' : ''}`;
+    item.onclick = () => selectCountry(code);
+    item.innerHTML = `
+      <span class="country-flag">${country.flag}</span>
+      <div class="country-info">
+        <div class="country-name">${country.name}</div>
+        <div class="country-region">${country.region}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function filterCountries() {
+  const input = document.getElementById('countrySearchInput').value.toLowerCase();
+  const items = document.querySelectorAll('.country-item');
   
-  document.getElementById('gdpGrowth').textContent = country.gdpGrowth.toFixed(1) + '%';
-  document.getElementById('tradeBalance').textContent = formatCurrency(country.tradeBalance);
-  document.getElementById('fxReserves').textContent = formatCurrency(country.fxReserves);
-  document.getElementById('military').textContent = country.military.toFixed(1) + '% GDP';
-  document.getElementById('productivity').textContent = '$' + country.productivity + '/hr';
-  document.getElementById('laborForce').textContent = country.laborForce + 'M';
-  document.getElementById('aiLevel').textContent = country.aiLevel + '%';
-  document.getElementById('stemGrads').textContent = country.stemGrads + 'K/yr';
+  items.forEach(item => {
+    const name = item.querySelector('.country-name').textContent.toLowerCase();
+    const region = item.querySelector('.country-region').textContent.toLowerCase();
+    item.style.display = (name.includes(input) || region.includes(input)) ? 'flex' : 'none';
+  });
+}
+
+function selectCountry(code) {
+  currentCountry = code;
+  renderCountryList();
+  updateDisplay();
+  updateChart();
+  addEvent(`Selected ${countries[code].name}`, 'info');
+}
+
+function formatValue(value, type = 'currency') {
+  if (type === 'currency') {
+    if (Math.abs(value) >= 1000) {
+      return `$${(value / 1000).toFixed(2)}T`;
+    }
+    return `$${Math.round(value)}B`;
+  }
+  return value.toLocaleString();
+}
+
+function updateDisplay() {
+  const c = countries[currentCountry];
+  
+  // Quick stats
+  document.getElementById('quickGdp').textContent = formatValue(c.gdp * 1000);
+  document.getElementById('quickInflation').textContent = c.inflation.toFixed(1) + '%';
+  document.getElementById('quickUnemployment').textContent = c.unemployment.toFixed(1) + '%';
+  document.getElementById('quickTrade').textContent = formatValue(c.tradeBalance);
+  
+  document.getElementById('quickGdpChange').textContent = `↑ ${c.gdpGrowth.toFixed(1)}%`;
+  document.getElementById('quickGdpChange').className = `stat-change ${c.gdpGrowth > 0 ? 'positive' : 'negative'}`;
+  
+  // Overview metrics
+  document.getElementById('gdpGrowth').textContent = c.gdpGrowth.toFixed(1) + '%';
+  document.getElementById('realGdp').textContent = formatValue(c.gdp * 1000);
+  document.getElementById('gdpPerCapita').textContent = '$' + c.gdpPerCapita.toLocaleString();
+  document.getElementById('tradeBalance').textContent = formatValue(c.tradeBalance);
+  document.getElementById('exports').textContent = formatValue(c.exports);
+  document.getElementById('imports').textContent = formatValue(c.imports);
+  document.getElementById('unemployment').textContent = c.unemployment.toFixed(1) + '%';
+  document.getElementById('laborForce').textContent = c.laborForce + 'M';
+  document.getElementById('productivity').textContent = '$' + Math.round(c.productivity) + '/hr';
+  document.getElementById('debtGdp').textContent = c.debt + '%';
+  document.getElementById('deficit').textContent = c.deficit.toFixed(1) + '%';
+  document.getElementById('fxReserves').textContent = formatValue(c.fxReserves);
+  document.getElementById('interestRate').textContent = c.interestRate.toFixed(2) + '%';
+  document.getElementById('inflation').textContent = c.inflation.toFixed(1) + '%';
+  document.getElementById('moneySupply').textContent = '+' + c.moneySupply.toFixed(1) + '%';
+  document.getElementById('aiLevel').textContent = c.aiLevel + '%';
+  document.getElementById('rdSpending').textContent = c.rdSpending.toFixed(1) + '%';
+  document.getElementById('stemGrads').textContent = c.stemGrads + 'K/yr';
   
   updateTradeTable();
   updateSupplyChains();
-  updateCurrencyControls();
-  updateCharts();
 }
 
 function updateTradeTable() {
-  const country = countries[currentCountry];
+  const c = countries[currentCountry];
   const tbody = document.getElementById('tradeTableBody');
   tbody.innerHTML = '';
   
-  country.trade.forEach(t => {
+  c.trade.forEach(t => {
     const balance = t.exports - t.imports;
     const row = tbody.insertRow();
     row.innerHTML = `
-      <td>${t.partner}</td>
-      <td>${formatCurrency(t.exports)}</td>
-      <td>${formatCurrency(t.imports)}</td>
-      <td style="color: ${balance > 0 ? '#10b981' : '#ef4444'}">${formatCurrency(balance)}</td>
-      <td style="color: #8b92a7">${t.goods}</td>
+      <td><strong>${t.partner}</strong></td>
+      <td>${formatValue(t.exports)}</td>
+      <td>${formatValue(t.imports)}</td>
+      <td style="color: ${balance > 0 ? 'var(--success)' : 'var(--danger)'}; font-weight: 600;">
+        ${formatValue(balance)}
+      </td>
+      <td style="color: var(--text-secondary);">${t.goods}</td>
+      <td>${t.pct.toFixed(1)}%</td>
     `;
   });
 }
 
 function updateSupplyChains() {
-  const country = countries[currentCountry];
+  const c = countries[currentCountry];
   const container = document.getElementById('supplyChainContainer');
   container.innerHTML = '';
   
-  country.supplyChains.forEach(chain => {
-    const div = document.createElement('div');
-    div.className = 'chain-item';
-    div.innerHTML = `
+  c.supplyChains.forEach(chain => {
+    const card = document.createElement('div');
+    card.className = 'chain-card';
+    card.innerHTML = `
       <div class="chain-header">
-        <span class="chain-title">${chain.name}</span>
-        <span class="chain-status ${chain.status}">${chain.status.toUpperCase()}</span>
+        <h4 class="chain-title">${chain.name}</h4>
+        <span class="chain-status ${chain.status}">${chain.status}</span>
       </div>
       <div class="chain-flow">
+        <span style="margin-right: 0.5rem;">⚡</span>
         <span>${chain.flow}</span>
-        <span class="flow-arrow">→</span>
       </div>
-      <div style="font-size: 0.8rem; color: #8b92a7; margin-top: 0.5rem;">
-        Risk: ${chain.risk}
+      <div class="chain-risk">
+        <strong>Risk Assessment:</strong> ${chain.risk}
       </div>
     `;
-    container.appendChild(div);
+    container.appendChild(card);
   });
 }
 
-function updateCurrencyControls() {
-  const country = countries[currentCountry];
+function initChart() {
+  const ctx = document.getElementById('mainChart');
+  const c = countries[currentCountry];
   
-  document.getElementById('exchangeSlider').value = country.exchangeRate;
-  document.getElementById('exchangeValue').textContent = country.exchangeRate.toFixed(2);
-  
-  document.getElementById('interestSlider').value = country.interestRate;
-  document.getElementById('interestValue').textContent = country.interestRate.toFixed(2) + '%';
-  
-  document.getElementById('moneySlider').value = country.moneySupply;
-  document.getElementById('moneyValue').textContent = country.moneySupply.toFixed(1) + '%';
+  mainChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['2020', '2021', '2022', '2023', '2024', '2025', '2026'],
+      datasets: [
+        {
+          label: 'GDP Growth %',
+          data: [
+            c.gdpGrowth - 2.5,
+            c.gdpGrowth - 1.8,
+            c.gdpGrowth - 0.9,
+            c.gdpGrowth - 0.3,
+            c.gdpGrowth,
+            c.gdpGrowth + 0.2,
+            c.gdpGrowth + 0.5
+          ],
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99, 102, 241, 0.1)',
+          tension: 0.4,
+          fill: true
+        },
+        {
+          label: 'Unemployment %',
+          data: [
+            c.unemployment + 2.1,
+            c.unemployment + 1.5,
+            c.unemployment + 0.8,
+            c.unemployment + 0.3,
+            c.unemployment,
+            c.unemployment - 0.2,
+            c.unemployment - 0.4
+          ],
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          tension: 0.4,
+          fill: true
+        },
+        {
+          label: 'Inflation %',
+          data: [
+            c.inflation - 1.2,
+            c.inflation + 0.5,
+            c.inflation + 2.3,
+            c.inflation + 1.1,
+            c.inflation,
+            c.inflation - 0.8,
+            c.inflation - 1.5
+          ],
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          tension: 0.4,
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+            font: { size: 12, weight: '500' }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.9)',
+          padding: 12,
+          titleFont: { size: 13, weight: '600' },
+          bodyFont: { size: 12 },
+          borderColor: 'rgba(226, 232, 240, 0.2)',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(226, 232, 240, 0.5)' },
+          ticks: { font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      }
+    }
+  });
 }
 
-function switchTab(tab) {
+function updateChart() {
+  const c = countries[currentCountry];
+  
+  mainChart.data.datasets[0].data = [
+    c.gdpGrowth - 2.5, c.gdpGrowth - 1.8, c.gdpGrowth - 0.9,
+    c.gdpGrowth - 0.3, c.gdpGrowth, c.gdpGrowth + 0.2, c.gdpGrowth + 0.5
+  ];
+  mainChart.data.datasets[1].data = [
+    c.unemployment + 2.1, c.unemployment + 1.5, c.unemployment + 0.8,
+    c.unemployment + 0.3, c.unemployment, c.unemployment - 0.2, c.unemployment - 0.4
+  ];
+  mainChart.data.datasets[2].data = [
+    c.inflation - 1.2, c.inflation + 0.5, c.inflation + 2.3,
+    c.inflation + 1.1, c.inflation, c.inflation - 0.8, c.inflation - 1.5
+  ];
+  
+  mainChart.update();
+}
+
+function switchTab(tabName) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   
   event.target.classList.add('active');
-  document.getElementById(tab + 'Tab').style.display = 'block';
+  document.getElementById(tabName + 'Tab').classList.add('active');
+}
+
+function applyScenario(scenario) {
+  const c = countries[currentCountry];
+  
+  const scenarios = {
+    sanctions: {
+      name: 'Trade Sanctions',
+      effects: () => {
+        c.gdpGrowth -= 1.5;
+        c.tradeBalance *= 0.7;
+        c.exports *= 0.75;
+        c.inflation += 1.2;
+        c.fxReserves *= 0.85;
+        c.unemployment += 0.8;
+        addEvent(`🚫 Trade sanctions imposed on ${c.name}`, 'danger');
+        addEvent(`GDP growth falls to ${c.gdpGrowth.toFixed(1)}%`, 'warning');
+        addEvent(`Exports decline ${Math.round(c.exports * 0.25)}B from restrictions`, 'warning');
+      }
+    },
+    war: {
+      name: 'Military Conflict',
+      effects: () => {
+        c.gdpGrowth -= 3.5;
+        c.military += 2.0;
+        c.debt += 15;
+        c.unemployment += 2.1;
+        c.deficit -= 3.2;
+        c.supplyChains.forEach(sc => sc.status = 'critical');
+        addEvent(`⚔️ Military conflict involving ${c.name}`, 'danger');
+        addEvent(`Defense spending surges to ${c.military.toFixed(1)}% of GDP`, 'warning');
+        addEvent(`All supply chains disrupted - status CRITICAL`, 'danger');
+      }
+    },
+    autarky: {
+      name: 'Autarky Policy',
+      effects: () => {
+        c.trade.forEach(t => {
+          t.exports *= 0.15;
+          t.imports *= 0.15;
+        });
+        c.exports *= 0.15;
+        c.imports *= 0.15;
+        c.tradeBalance = c.exports - c.imports;
+        c.gdpGrowth -= 2.8;
+        c.productivity *= 0.82;
+        c.inflation += 3.5;
+        addEvent(`🏰 ${c.name} adopts economic autarky`, 'warning');
+        addEvent(`Trade volumes collapse to 15% of baseline`, 'danger');
+        addEvent(`Productivity drops to $${Math.round(c.productivity)}/hr`, 'warning');
+      }
+    },
+    oil_crisis: {
+      name: 'Energy Crisis',
+      effects: () => {
+        c.inflation += 2.4;
+        c.gdpGrowth -= 1.1;
+        c.tradeBalance -= 120;
+        c.unemployment += 0.7;
+        c.imports += 80;
+        addEvent(`🛢️ Global oil crisis impacts ${c.name}`, 'warning');
+        addEvent(`Energy costs spike - inflation hits ${c.inflation.toFixed(1)}%`, 'danger');
+        addEvent(`Trade deficit widens $120B from oil imports`, 'warning');
+      }
+    },
+    ai_boom: {
+      name: 'AI Revolution',
+      effects: () => {
+        c.aiLevel += 25;
+        c.productivity *= 1.45;
+        c.gdpGrowth += 2.3;
+        c.unemployment += 1.8;
+        c.rdSpending += 0.8;
+        addEvent(`🤖 AI productivity revolution in ${c.name}`, 'success');
+        addEvent(`AI automation reaches ${c.aiLevel}% of economy`, 'info');
+        addEvent(`Productivity surges to $${Math.round(c.productivity)}/hr`, 'success');
+        addEvent(`Structural unemployment rises to ${c.unemployment.toFixed(1)}%`, 'warning');
+      }
+    },
+    recession: {
+      name: 'Global Recession',
+      effects: () => {
+        c.gdpGrowth = -2.4;
+        c.unemployment += 3.2;
+        c.debt += 12;
+        c.tradeBalance *= 0.6;
+        c.fxReserves *= 0.7;
+        c.deficit -= 2.5;
+        addEvent(`📉 ${c.name} enters deep recession`, 'danger');
+        addEvent(`GDP contracts ${Math.abs(c.gdpGrowth).toFixed(1)}%`, 'danger');
+        addEvent(`Unemployment surges to ${c.unemployment.toFixed(1)}%`, 'danger');
+      }
+    },
+    trade_war: {
+      name: 'Trade War',
+      effects: () => {
+        c.exports *= 0.85;
+        c.imports *= 0.9;
+        c.tradeBalance = c.exports - c.imports;
+        c.inflation += 1.5;
+        c.gdpGrowth -= 0.9;
+        addEvent(`⚡ Trade war escalates involving ${c.name}`, 'warning');
+        addEvent(`Tariffs reduce trade flows by 15%`, 'warning');
+        addEvent(`Consumer prices rise ${c.inflation.toFixed(1)}%`, 'warning');
+      }
+    },
+    climate_shock: {
+      name: 'Climate Disaster',
+      effects: () => {
+        c.gdpGrowth -= 1.2;
+        c.debt += 8;
+        c.deficit -= 1.8;
+        c.productivity *= 0.93;
+        addEvent(`🌪️ Major climate disaster strikes ${c.name}`, 'danger');
+        addEvent(`Reconstruction costs push debt to ${c.debt}% of GDP`, 'warning');
+        addEvent(`Infrastructure damage reduces productivity`, 'warning');
+      }
+    }
+  };
+  
+  if (scenarios[scenario]) {
+    scenarios[scenario].effects();
+    updateDisplay();
+    updateChart();
+  }
 }
 
 function addEvent(text, type = 'info') {
   const log = document.getElementById('eventLog');
   const now = new Date().toLocaleTimeString();
-  const div = document.createElement('div');
-  div.className = 'event-item';
-  div.innerHTML = `
-    <div class="event-time">T+${eventCounter} • ${now}</div>
-    <div class="event-text">${text}</div>
+  const icons = {
+    info: '📊',
+    success: '✅',
+    warning: '⚠️',
+    danger: '🚨'
+  };
+  
+  const item = document.createElement('div');
+  item.className = 'event-item';
+  item.innerHTML = `
+    <div class="event-icon">${icons[type] || icons.info}</div>
+    <div class="event-content">
+      <div class="event-time">T+${eventCounter} • ${now}</div>
+      <div class="event-text">${text}</div>
+    </div>
   `;
-  log.insertBefore(div, log.firstChild);
+  log.insertBefore(item, log.firstChild);
   eventCounter++;
 }
 
-function applyScenario(scenario) {
-  const country = countries[currentCountry];
-  
-  switch(scenario) {
-    case 'sanctions':
-      addEvent(`⚠️ Trade sanctions imposed on ${country.name}`);
-      country.gdpGrowth -= 1.5;
-      country.tradeBalance *= 0.7;
-      country.inflation += 1.2;
-      country.fxReserves *= 0.85;
-      addEvent(`GDP growth drops to ${country.gdpGrowth.toFixed(1)}% due to reduced exports`);
-      addEvent(`Inflation rises to ${country.inflation.toFixed(1)}% from supply disruptions`);
-      break;
-      
-    case 'war':
-      addEvent(`🚨 Military conflict involving ${country.name}`);
-      country.gdpGrowth -= 3.5;
-      country.military += 2.0;
-      country.debt += 15;
-      country.unemployment += 2.1;
-      country.supplyChains.forEach(c => c.status = 'critical');
-      addEvent(`Military spending increased to ${country.military.toFixed(1)}% of GDP`);
-      addEvent(`All supply chains disrupted - status: CRITICAL`);
-      addEvent(`Unemployment spikes to ${country.unemployment.toFixed(1)}%`);
-      break;
-      
-    case 'autarky':
-      addEvent(`🏰 ${country.name} adopts autarky policy`);
-      country.trade.forEach(t => {
-        t.exports *= 0.15;
-        t.imports *= 0.15;
-      });
-      country.gdpGrowth -= 2.8;
-      country.productivity *= 0.82;
-      country.inflation += 3.5;
-      addEvent(`Trade volumes collapse to 15% of previous levels`);
-      addEvent(`Productivity falls to $${country.productivity.toFixed(0)}/hr from inefficiencies`);
-      addEvent(`Inflation surges to ${country.inflation.toFixed(1)}% from domestic shortages`);
-      break;
-      
-    case 'oil_crisis':
-      addEvent(`🛢️ Global oil crisis impacts ${country.name}`);
-      country.inflation += 2.4;
-      country.gdpGrowth -= 1.1;
-      country.tradeBalance -= 120;
-      country.unemployment += 0.7;
-      addEvent(`Energy costs spike - inflation reaches ${country.inflation.toFixed(1)}%`);
-      addEvent(`Trade deficit widens by $120B from oil imports`);
-      break;
-      
-    case 'ai_boom':
-      addEvent(`🤖 AI productivity revolution in ${country.name}`);
-      country.aiLevel += 25;
-      country.productivity *= 1.45;
-      country.gdpGrowth += 2.3;
-      country.unemployment += 1.8;
-      addEvent(`AI automation increases to ${country.aiLevel}% of economy`);
-      addEvent(`Productivity surges to $${country.productivity.toFixed(0)}/hr`);
-      addEvent(`Structural unemployment rises to ${country.unemployment.toFixed(1)}% from displacement`);
-      addEvent(`GDP growth accelerates to ${country.gdpGrowth.toFixed(1)}% from efficiency gains`);
-      break;
-      
-    case 'recession':
-      addEvent(`📉 ${country.name} enters recession`);
-      country.gdpGrowth = -2.4;
-      country.unemployment += 3.2;
-      country.debt += 12;
-      country.tradeBalance *= 0.6;
-      country.fxReserves *= 0.7;
-      addEvent(`GDP contracts ${Math.abs(country.gdpGrowth).toFixed(1)}%`);
-      addEvent(`Unemployment reaches ${country.unemployment.toFixed(1)}%`);
-      addEvent(`Debt-to-GDP ratio climbs to ${country.debt}%`);
-      break;
+function showDataSources() {
+  switchTab('sources');
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab')[4].classList.add('active');
+}
+
+function exportData() {
+  const c = countries[currentCountry];
+  const data = JSON.stringify(c, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentCountry}-economic-data.json`;
+  a.click();
+  addEvent(`Exported ${c.name} economic data`, 'success');
+}
+
+function resetSimulation() {
+  if (confirm('Reset all simulation data? This will restore default values.')) {
+    location.reload();
   }
-  
-  updateCountryDisplay();
 }
 
-function updateCharts() {
-  if (mainChart) mainChart.destroy();
-  if (currencyChart) currencyChart.destroy();
-  
-  const country = countries[currentCountry];
-  
-  const ctx1 = document.getElementById('mainChart');
-  mainChart = new Chart(ctx1, {
-    type: 'line',
-    data: {
-      labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q2 2025'],
-      datasets: [{
-        label: 'GDP Growth %',
-        data: [2.5, 2.3, 2.1, country.gdpGrowth, country.gdpGrowth - 0.2, country.gdpGrowth + 0.1],
-        borderColor: '#667eea',
-        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-        tension: 0.4
-      }, {
-        label: 'Unemployment %',
-        data: [3.5, 3.6, 3.7, country.unemployment, country.unemployment + 0.1, country.unemployment - 0.1],
-        borderColor: '#ef4444',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, labels: { color: '#e4e6eb' } }
-      },
-      scales: {
-        y: { ticks: { color: '#8b92a7' }, grid: { color: '#1f2937' } },
-        x: { ticks: { color: '#8b92a7' }, grid: { color: '#1f2937' } }
-      }
-    }
-  });
-  
-  const ctx2 = document.getElementById('currencyChart');
-  currencyChart = new Chart(ctx2, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-      datasets: [{
-        label: 'Exchange Rate',
-        data: [country.exchangeRate * 1.05, country.exchangeRate * 1.02, country.exchangeRate, 
-               country.exchangeRate * 0.98, country.exchangeRate * 0.97, country.exchangeRate],
-        borderColor: '#10b981',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        tension: 0.4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: { ticks: { color: '#8b92a7' }, grid: { color: '#1f2937' } },
-        x: { ticks: { color: '#8b92a7' }, grid: { color: '#1f2937' } }
-      }
-    }
-  });
-}
-
-document.getElementById('countrySelect').addEventListener('change', (e) => {
-  currentCountry = e.target.value;
-  updateCountryDisplay();
-  addEvent(`Switched to ${countries[currentCountry].name}`);
-});
-
-document.getElementById('exchangeSlider').addEventListener('input', (e) => {
-  const val = parseFloat(e.target.value);
-  document.getElementById('exchangeValue').textContent = val.toFixed(2);
-  countries[currentCountry].exchangeRate = val;
-});
-
-document.getElementById('interestSlider').addEventListener('input', (e) => {
-  const val = parseFloat(e.target.value);
-  document.getElementById('interestValue').textContent = val.toFixed(2) + '%';
-  countries[currentCountry].interestRate = val;
-});
-
-document.getElementById('moneySlider').addEventListener('input', (e) => {
-  const val = parseFloat(e.target.value);
-  document.getElementById('moneyValue').textContent = val.toFixed(1) + '%';
-  countries[currentCountry].moneySupply = val;
-});
-
-updateCountryDisplay();
-addEvent('World Economy Simulator initialized');
-addEvent('All systems operational');
+// Initialize on load
+window.onload = init;
 </script>
 </body>
 </html>
